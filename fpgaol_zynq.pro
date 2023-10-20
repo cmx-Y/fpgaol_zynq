@@ -5,7 +5,10 @@ CONFIG += console
 
 INCLUDEPATH += include/
 
-HEADERS += include/log.h
+HEADERS += include/log.h \
+           include/fpga.h
+
+DEFINES += QT_MESSAGELOGCONTEXT
 
 SOURCES += src/main.cpp
 
