@@ -2,8 +2,18 @@
 #include<fcntl.h>
 #include<sys/mman.h>
 
+
+#include<QtCore/QDebug>
+#include<QJsonArray>
+#include<QJsonObject>
+#include<QJsonDocument>
+
+#include<fpga.h>
+
 #define LED_BASE_ADDR 0x41200000
 #define SW_BASE_ADDR  0x41210000
+
+static bool notifying = false;
 
 int write_gpio(int gpio, int level){
   int memfd;
@@ -29,13 +39,30 @@ int write_gpio(int gpio, int level){
   }
 }
 
-int main(){
-  int gpio;
-  int level;
-  while(1){
-    scanf("%d", &gpio);
-    scanf("%d", &level);
-    write_gpio(gpio, level);
-  }
-  return 0;
+static void loop_fn(){
+	QJsonObject led_json, seg_json;
+	QJsonArray led_val, seg_val;
+	qInfo() << "monitor_thrd launch successfully";
+
+	for(int i = 0; i < 4; i++) led_val.append(0);
+
+	led_json["type"] = "LED";
+	led_json["values"] = led_val;
+
+	auto msg = QJsonDocument(led_json).toJson(QJsonDocument::Compact);
+	qDebug() << "led_json: " << msg;
+	return;
+}
+
+int FPGA::start_notify(){
+	qInfo() << "start_notify receive notify_start";
+	monitor_thrd = std::thread(loop_fn);
+	return 114514;
+}
+
+FPGA::FPGA(){
+	qInfo() << "FPGA instance init successfully\n";
+}
+
+FPGA::~FPGA(){
 }

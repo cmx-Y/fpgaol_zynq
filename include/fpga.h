@@ -12,10 +12,12 @@ class FPGA : public QObject
 private:
 	std::thread monitor_thrd;
 public:
-	FPGA(){
-		qInfo("create FPGA successfully");
-	};
-	~FPGA(){};
+	FPGA();
+	~FPGA();
+
+
+public slots:
+	int start_notify();
 };
 
 
