@@ -17,6 +17,12 @@
 
 static bool notifying = false;
 static unsigned char cur_led = 0;
+FPGA *fpga_instance = nullptr;
+
+void FPGA::call_send_fpga_msg(QString msg) {
+	emit send_fpga_msg(msg);
+}
+
 
 int write_gpio(int gpio, int level){
   int memfd;
@@ -72,19 +78,22 @@ static void loop_fn(){
 	QJsonArray led_val, seg_val;
 	qDebug() << "monitor_thrd launch successfully";
 
-	for(int i = 0; i < 4; i++) led_val.append(0);
+	for(int i = 0; i < 8; i++) led_val.append(0);
 
 	led_json["type"] = "LED";
 	led_json["values"] = led_val;
-
-	auto msg = QJsonDocument(led_json).toJson(QJsonDocument::Compact);
-	qDebug() << "led_json: " << msg;
 
   while(1){
     led = read_gpio();
     if (led ^ cur_led){
       cur_led = led;
-      printf("read gpio: %u \n", cur_led);
+      for (int i = 0; i < 8; i++){
+        led_val[i] = (int)((cur_led >> i) & 1);
+      }
+      led_json["values"] = led_val;
+      auto msg = QJsonDocument(led_json).toJson(QJsonDocument::Compact);
+	    qDebug() << "led_json: " << msg;
+      fpga_instance->call_send_fpga_msg(msg);
     }
   }
 	return;
@@ -93,12 +102,13 @@ static void loop_fn(){
 int FPGA::start_notify(){
 	qInfo() << "start_notify receive notify_start";
 	monitor_thrd = std::thread(loop_fn);
-	return 114514;
+	return 0;
 }
 
 
 
 FPGA::FPGA(){
+  fpga_instance = this;
 	qInfo() << "FPGA instance init successfully\n";
 }
 

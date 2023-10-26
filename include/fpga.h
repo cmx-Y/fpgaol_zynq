@@ -2,6 +2,7 @@
 #define FPGA_H
 
 #include<QtCore/QObject>
+#include<QString>
 
 #include<thread>
 
@@ -14,10 +15,13 @@ private:
 public:
 	FPGA();
 	~FPGA();
-
+	void call_send_fpga_msg(QString msg);
 
 public slots:
 	int start_notify();
+
+signals:
+	void send_fpga_msg(QString msg);
 };
 
 

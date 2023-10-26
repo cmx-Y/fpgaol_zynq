@@ -92,11 +92,21 @@ void wsServer::recvFGPAMessage(QString message)
 		if (m_debug)
 			qDebug() << "FPGA Message received: GPIO: " << json.object()["gpio"] << " level: " << json.object()["level"];
 
-		//int gpio = json.toJson()["gpio"].toInt();
+        
+
+		int gpio = json.object()["gpio"].toInt();
         int level;
         QString msg;
 
 		int ret;
+
+        if(gpio == -2){
+            ret = emit notify_start();
+
+            if (m_debug)
+                qDebug() << "Start Notify returned: " << ret;
+        }
+
         /* if(gpio == -1){
             qDebug() << "END notify";
             if (emit notify_end() == 0) {

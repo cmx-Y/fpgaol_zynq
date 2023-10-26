@@ -44,8 +44,12 @@ int main(int argc, char *argv[]){
 		return 255;
 	}
 
-	bool ok= QObject::connect(ws_server, &wsServer::notify_start,
+	QObject::connect(ws_server, &wsServer::notify_start,
 					fpga, &FPGA::start_notify);
+
+	QObject::connect(fpga, &FPGA::send_fpga_msg,
+			ws_server, &wsServer::sendFPGAMessage);
+
 
 	qInfo("Application has started");
 	app.exec();
