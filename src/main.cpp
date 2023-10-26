@@ -37,7 +37,7 @@ int main(int argc, char *argv[]){
 
 	wsServer *ws_server;
 	try{
-		ws_server = new wsServer();
+		ws_server = new wsServer(8090, true, &app);
 	}
 	catch(const std::exception& e){
 		qWarning() << (e.what());
@@ -46,9 +46,6 @@ int main(int argc, char *argv[]){
 
 	bool ok= QObject::connect(ws_server, &wsServer::notify_start,
 					fpga, &FPGA::start_notify);
-	qDebug() << "connect result: " << ok;
-	ws_server->test();
-	qDebug() << "chmod test";
 
 	qInfo("Application has started");
 	app.exec();

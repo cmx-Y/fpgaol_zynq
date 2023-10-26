@@ -1,6 +1,6 @@
 TARGET = fpgaol_zynq
 TEMPLATE = app
-QT = core
+QT = core websockets
 CONFIG += console
 
 INCLUDEPATH += include/

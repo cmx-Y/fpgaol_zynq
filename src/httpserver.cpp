@@ -5,7 +5,7 @@
 
 handler::handler() {
     // Configure static file controller
-    fileSettings.setValue("path", "../docroot"); // Using absolute path when sudo
+    fileSettings.setValue("path", "/home/zynq/fpgaol_zynq/docroot"); // Using absolute path when sudo
     fileSettings.setValue("encoding", "UTF-8");
     fileSettings.beginGroup("docroot");
     fileSettings.endGroup();

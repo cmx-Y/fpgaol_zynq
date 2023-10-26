@@ -1,9 +1,9 @@
 // version = 1.6
 // global variables
 // FPGAOL_NG_DEV
-var DEBUG_MODE = false;
+var DEBUG_MODE = true;
 var DEBUG_HTTP_SERVER = "127.0.0.1:8080";
-var DEBUG_WS_SERVER = "127.0.0.1:8090";
+var DEBUG_WS_SERVER = "192.168.137.13:8090";
 
 var token;
 var term;
