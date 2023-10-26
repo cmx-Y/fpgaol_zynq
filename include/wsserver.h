@@ -12,7 +12,7 @@ public:
 	~wsServer();
 	void test();
 
-Q_SIGNALS:
+signals:
 	int notify_start();
 };
 

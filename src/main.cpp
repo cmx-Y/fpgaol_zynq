@@ -9,6 +9,7 @@
 #include<log.h>
 #include<fpga.h>
 #include<wsserver.h>
+#include "httpserver.h"
 
 #include<exception>
 
@@ -22,6 +23,8 @@ int main(int argc, char *argv[]){
 	qInfo() << "FPGAOL_ZYNQ compiled at" << __TIME__ << ", " << __DATE__;
 	app.setApplicationName("fpgaol_zynq");
 	app.setOrganizationName("fpgaol_developer");
+
+	new httpServer(8080, &app);
 
 	FPGA *fpga;
 	try{
@@ -44,9 +47,10 @@ int main(int argc, char *argv[]){
 	bool ok= QObject::connect(ws_server, &wsServer::notify_start,
 					fpga, &FPGA::start_notify);
 	qDebug() << "connect result: " << ok;
+	ws_server->test();
+	qDebug() << "chmod test";
 
 	qInfo("Application has started");
 	app.exec();
-	ws_server->test();
 	qInfo("Application has stopped");
 }

@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<fcntl.h>
 #include<sys/mman.h>
+#include<iostream>
+#include<unistd.h>
 
 
 #include<QtCore/QDebug>
@@ -14,6 +16,7 @@
 #define SW_BASE_ADDR  0x41210000
 
 static bool notifying = false;
+static unsigned char cur_led = 0;
 
 int write_gpio(int gpio, int level){
   int memfd;
@@ -37,12 +40,37 @@ int write_gpio(int gpio, int level){
     offset = offset ^ 0xff;
     *(unsigned char*)lptr = curr_val & offset;
   }
+
+  munmap(lptr, 1*sizeof(char));
+  close(memfd);
 }
 
+unsigned char read_gpio( ){
+  int memfd;
+  if ((memfd = open("/dev/mem", O_RDWR | O_DSYNC)) == -1){
+    printf("Can't open /dev/mem\n");
+    return -1;
+  }
+
+  void *ptr = mmap (0 , 1*sizeof(char), PROT_READ, MAP_SHARED, memfd, SW_BASE_ADDR);
+  if(ptr == MAP_FAILED){
+    printf("lfail");
+    return -1;
+  }
+
+  
+  unsigned char cur_val = *(unsigned char*)ptr;
+  munmap(ptr, 1*sizeof(char));
+  close(memfd);
+  return cur_val;
+}
+
+
 static void loop_fn(){
+  unsigned char led = 0;
 	QJsonObject led_json, seg_json;
 	QJsonArray led_val, seg_val;
-	qInfo() << "monitor_thrd launch successfully";
+	qDebug() << "monitor_thrd launch successfully";
 
 	for(int i = 0; i < 4; i++) led_val.append(0);
 
@@ -51,6 +79,14 @@ static void loop_fn(){
 
 	auto msg = QJsonDocument(led_json).toJson(QJsonDocument::Compact);
 	qDebug() << "led_json: " << msg;
+
+  while(1){
+    led = read_gpio();
+    if (led ^ cur_led){
+      cur_led = led;
+      printf("read gpio: %u \n", cur_led);
+    }
+  }
 	return;
 }
 
@@ -59,6 +95,8 @@ int FPGA::start_notify(){
 	monitor_thrd = std::thread(loop_fn);
 	return 114514;
 }
+
+
 
 FPGA::FPGA(){
 	qInfo() << "FPGA instance init successfully\n";

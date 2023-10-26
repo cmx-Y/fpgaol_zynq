@@ -8,7 +8,6 @@ void wsServer::test(){
 
 wsServer::wsServer(){
 	qInfo() << "wsServer instance create successfully";
-	this->test();
 }
 
 wsServer::~wsServer(){
