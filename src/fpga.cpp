@@ -23,8 +23,7 @@ void FPGA::call_send_fpga_msg(QString msg) {
 	emit send_fpga_msg(msg);
 }
 
-
-int write_gpio(int gpio, int level){
+int FPGA::write_gpio(int gpio, int level){
   int memfd;
   if ((memfd = open("/dev/mem", O_RDWR | O_DSYNC)) == -1){
     printf("Can't open /dev/mem\n");
@@ -49,6 +48,7 @@ int write_gpio(int gpio, int level){
 
   munmap(lptr, 1*sizeof(char));
   close(memfd);
+  return 0;
 }
 
 unsigned char read_gpio( ){

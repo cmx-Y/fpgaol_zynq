@@ -17,8 +17,9 @@ public:
 	~FPGA();
 	void call_send_fpga_msg(QString msg);
 
-public slots:
+public Q_SLOTS:
 	int start_notify();
+	int write_gpio(int gpio, int level);
 
 signals:
 	void send_fpga_msg(QString msg);

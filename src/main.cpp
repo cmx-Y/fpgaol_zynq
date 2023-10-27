@@ -50,6 +50,10 @@ int main(int argc, char *argv[]){
 	QObject::connect(fpga, &FPGA::send_fpga_msg,
 			ws_server, &wsServer::sendFPGAMessage);
 
+	QObject::connect(ws_server, &wsServer::gpio_write,
+			fpga, &FPGA::write_gpio);
+
+
 
 	qInfo("Application has started");
 	app.exec();

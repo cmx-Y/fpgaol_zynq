@@ -105,6 +105,9 @@ void wsServer::recvFGPAMessage(QString message)
 
             if (m_debug)
                 qDebug() << "Start Notify returned: " << ret;
+        }else if(gpio >= 0){
+            level = (int)json.object()["level"].toBool();
+            emit gpio_write(gpio, level);
         }
 
         /* if(gpio == -1){
